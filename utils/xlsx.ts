@@ -14,7 +14,7 @@ export async function exportExcel(rows: Row[]) {
     "담당자": r.owner || "",
     "생성일시": r.createdAt,
   }));
-  const ws = XLSX.utils.json_to_sheet(data, { origin: 0 });
+  const ws = XLSX.utils.json_to_sheet(data);
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, "Entries");
   const dateTag = new Date().toISOString().slice(0, 10);
