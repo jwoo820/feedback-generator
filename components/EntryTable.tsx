@@ -9,7 +9,15 @@ type Props = {
 };
 
 function escapeHtml(s = "") {
-  return s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", """: "&quot;", "'": "&#39;" }[c] as string));
+  return s.replace(/[&<>"']/g, (c) => (
+    {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    }[c] as string
+  ));
 }
 
 export default function EntryTable({ rows, setRows }: Props) {
@@ -76,11 +84,11 @@ export default function EntryTable({ rows, setRows }: Props) {
             <option value="반영완료">반영완료</option>
           </select>
           <label className="inline-flex items-center gap-2">
-            <input type="checkbox" className="scale-110" checked={fApp} onChange={(e)=>setFApp(e.target.checked)} />
+            <input type="checkbox" className="scale-110" checked={fApp} onChange={(e) => setFApp(e.target.checked)} />
             <span>APP만</span>
           </label>
           <label className="inline-flex items-center gap-2">
-            <input type="checkbox" className="scale-110" checked={fWeb} onChange={(e)=>setFWeb(e.target.checked)} />
+            <input type="checkbox" className="scale-110" checked={fWeb} onChange={(e) => setFWeb(e.target.checked)} />
             <span>Web만</span>
           </label>
           <button onClick={resetFilter} className="btn btn-ghost">필터 초기화</button>
@@ -114,7 +122,7 @@ export default function EntryTable({ rows, setRows }: Props) {
                         <select
                           className="w-full px-2 py-1 rounded bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"
                           value={r.reflect}
-                          onChange={(e)=>updateRow(r.id, { reflect: e.target.value })}
+                          onChange={(e) => updateRow(r.id, { reflect: e.target.value })}
                         >
                           <option>미반영</option>
                           <option>검토중</option>
@@ -124,7 +132,7 @@ export default function EntryTable({ rows, setRows }: Props) {
                       <td>
                         <input
                           value={r.item}
-                          onChange={(e)=>updateRow(r.id, { item: e.target.value })}
+                          onChange={(e) => updateRow(r.id, { item: e.target.value })}
                           className="w-full px-2 py-1 rounded bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"
                         />
                       </td>
@@ -133,7 +141,7 @@ export default function EntryTable({ rows, setRows }: Props) {
                           <input
                             type="checkbox"
                             checked={r.platform.includes("APP")}
-                            onChange={(e)=>{
+                            onChange={(e) => {
                               const set = new Set(r.platform);
                               e.target.checked ? set.add("APP") : set.delete("APP");
                               updateRow(r.id, { platform: Array.from(set) as any });
@@ -145,7 +153,7 @@ export default function EntryTable({ rows, setRows }: Props) {
                           <input
                             type="checkbox"
                             checked={r.platform.includes("Web")}
-                            onChange={(e)=>{
+                            onChange={(e) => {
                               const set = new Set(r.platform);
                               e.target.checked ? set.add("Web") : set.delete("Web");
                               updateRow(r.id, { platform: Array.from(set) as any });
@@ -157,7 +165,7 @@ export default function EntryTable({ rows, setRows }: Props) {
                       <td>
                         <textarea
                           value={r.content}
-                          onChange={(e)=>updateRow(r.id, { content: e.target.value })}
+                          onChange={(e) => updateRow(r.id, { content: e.target.value })}
                           rows={2}
                           className="w-full px-2 py-1 rounded bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"
                         />
@@ -165,14 +173,14 @@ export default function EntryTable({ rows, setRows }: Props) {
                       <td>
                         <input
                           value={r.owner || ""}
-                          onChange={(e)=>updateRow(r.id, { owner: e.target.value })}
+                          onChange={(e) => updateRow(r.id, { owner: e.target.value })}
                           className="w-full px-2 py-1 rounded bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"
                         />
                       </td>
                       <td className="text-xs text-slate-500">{r.createdAt}</td>
                       <td className="space-x-2">
-                        <button className="btn btn-primary" onClick={()=>updateRow(r.id, { _editing: false })}>저장</button>
-                        <button className="btn btn-ghost" onClick={()=>updateRow(r.id, { _editing: false })}>취소</button>
+                        <button className="btn btn-primary" onClick={() => updateRow(r.id, { _editing: false })}>저장</button>
+                        <button className="btn btn-ghost" onClick={() => updateRow(r.id, { _editing: false })}>취소</button>
                       </td>
                     </>
                   ) : (
@@ -184,9 +192,9 @@ export default function EntryTable({ rows, setRows }: Props) {
                       <td>{escapeHtml(r.owner || "-")}</td>
                       <td className="text-xs text-slate-500">{r.createdAt}</td>
                       <td className="space-x-2">
-                        <button className="btn btn-ghost" onClick={()=>updateRow(r.id, { _editing: true })}>수정</button>
-                        <button className="btn btn-ghost" onClick={()=>dupRow(r.id)}>복제</button>
-                        <button className="btn btn-ghost" onClick={()=>removeRow(r.id)}>삭제</button>
+                        <button className="btn btn-ghost" onClick={() => updateRow(r.id, { _editing: true })}>수정</button>
+                        <button className="btn btn-ghost" onClick={() => dupRow(r.id)}>복제</button>
+                        <button className="btn btn-ghost" onClick={() => removeRow(r.id)}>삭제</button>
                       </td>
                     </>
                   )}
