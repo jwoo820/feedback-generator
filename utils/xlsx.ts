@@ -28,12 +28,16 @@ export async function importExcel(file: File): Promise<Row[]> {
   const ws = wb.Sheets[wb.SheetNames[0]];
   const json: any[] = XLSX.utils.sheet_to_json(ws, { defval: "" });
   const nowISO = () => new Date().toISOString().replace("T", " ").slice(0, 16);
-  const uid = () => Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-4);
+  const uid = () =>
+    Math.random().toString(36).slice(2, 9) +
+    Date.now().toString(36).slice(-4);
 
   const imported: Row[] = json
     .map((r) => ({
       id: uid(),
-      reflect: String(r["반영 여부"] ?? r["반영여부"] ?? r["상태"] ?? "미반영"),
+      reflect: String(
+        r["반영 여부"] ?? r["반영여부"] ?? r["상태"] ?? "미반영"
+      ),
       item: String(r["항목"] ?? r["타이틀"] ?? r["제목"] ?? ""),
       platform: String(r["플랫폼"] ?? r["APP/Web"] ?? "")
         .split(",")

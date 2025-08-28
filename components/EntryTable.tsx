@@ -6,6 +6,8 @@ import type { Row } from "./types";
 type Props = {
   rows: Row[];
   setRows: (rows: Row[]) => void;
+  onSaveRow: (row: Row) => Promise<Row>;
+  onDeleteRow: (id: string) => Promise<void>;
 };
 
 function escapeHtml(s = "") {
@@ -20,7 +22,7 @@ function escapeHtml(s = "") {
   ));
 }
 
-export default function EntryTable({ rows, setRows }: Props) {
+export default function EntryTable({ rows, setRows, onSaveRow, onDeleteRow }: Props) {
   const [q, setQ] = useState("");
   const [fReflect, setFReflect] = useState("");
   const [fApp, setFApp] = useState(false);
@@ -37,25 +39,31 @@ export default function EntryTable({ rows, setRows }: Props) {
     });
   }, [rows, q, fReflect, fApp, fWeb]);
 
-  const updateRow = (id: string, patch: Partial<Row>) => {
+  const updateRowLocal = (id: string, patch: Partial<Row>) => {
     setRows(rows.map((r) => (r.id === id ? { ...r, ...patch } : r)));
   };
 
-  const removeRow = (id: string) => {
-    if (!confirm("삭제하시겠습니까?")) return;
-    setRows(rows.filter((r) => r.id !== id));
-  };
+  async function onSave(id: string) {
+    const r = rows.find((x) => x.id === id);
+    if (!r) return;
+    try {
+      const saved = await onSaveRow({ ...r, _editing: false });
+      updateRowLocal(id, { ...saved, _editing: false }); // 실시간 구독이 있어도 UX 즉시 반영
+    } catch (e: any) {
+      alert(e?.message || "저장 실패");
+    }
+  }
 
-  const dupRow = (id: string) => {
-    const i = rows.findIndex((r) => r.id === id);
-    if (i < 0) return;
-    const uid = () => Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-4);
-    const nowISO = () => new Date().toISOString().replace("T", " ").slice(0, 16);
-    const copy = { ...rows[i], id: uid(), createdAt: nowISO(), _editing: false };
-    const next = [...rows];
-    next.splice(i + 1, 0, copy);
-    setRows(next);
-  };
+  async function onDelete(id: string) {
+    if (!confirm("삭제하시겠습니까?")) return;
+    try {
+      await onDeleteRow(id);
+      // 실시간 구독에 의해 제거되지만, 즉시 UX 반영
+      setRows(rows.filter((r) => r.id !== id));
+    } catch (e: any) {
+      alert(e?.message || "삭제 실패");
+    }
+  }
 
   const resetFilter = () => {
     setQ(""); setFReflect(""); setFApp(false); setFWeb(false);
@@ -84,23 +92,23 @@ export default function EntryTable({ rows, setRows }: Props) {
             <option value="반영완료">반영완료</option>
           </select>
           <label className="inline-flex items-center gap-2">
-            <input type="checkbox" className="scale-110" checked={fApp} onChange={(e) => setFApp(e.target.checked)} />
+            <input type="checkbox" className="scale-110" checked={fApp} onChange={(e)=>setFApp(e.target.checked)} />
             <span>APP만</span>
           </label>
           <label className="inline-flex items-center gap-2">
-            <input type="checkbox" className="scale-110" checked={fWeb} onChange={(e) => setFWeb(e.target.checked)} />
+            <input type="checkbox" className="scale-110" checked={fWeb} onChange={(e)=>setFWeb(e.target.checked)} />
             <span>Web만</span>
           </label>
           <button onClick={resetFilter} className="btn btn-ghost">필터 초기화</button>
         </div>
       </section>
 
-      {/* 테이블 */}
+      {/* 리스트 */}
       <section className="card">
         <div className="flex items-center justify-between mb-3">
           <div className="text-sm text-slate-600 dark:text-slate-400">총 <span>{filtered.length}</span>건</div>
         </div>
-        <div className="overflow-auto max-h-[60vh] rounded-xl border border-slate-200 dark:border-slate-700">
+        <div className="overflow-auto max-h=[60vh] rounded-xl border border-slate-200 dark:border-slate-700">
           <table>
             <thead>
               <tr>
@@ -122,7 +130,7 @@ export default function EntryTable({ rows, setRows }: Props) {
                         <select
                           className="w-full px-2 py-1 rounded bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"
                           value={r.reflect}
-                          onChange={(e) => updateRow(r.id, { reflect: e.target.value })}
+                          onChange={(e)=>updateRowLocal(r.id, { reflect: e.target.value })}
                         >
                           <option>미반영</option>
                           <option>검토중</option>
@@ -132,7 +140,7 @@ export default function EntryTable({ rows, setRows }: Props) {
                       <td>
                         <input
                           value={r.item}
-                          onChange={(e) => updateRow(r.id, { item: e.target.value })}
+                          onChange={(e)=>updateRowLocal(r.id, { item: e.target.value })}
                           className="w-full px-2 py-1 rounded bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"
                         />
                       </td>
@@ -141,10 +149,10 @@ export default function EntryTable({ rows, setRows }: Props) {
                           <input
                             type="checkbox"
                             checked={r.platform.includes("APP")}
-                            onChange={(e) => {
+                            onChange={(e)=>{
                               const set = new Set(r.platform);
                               e.target.checked ? set.add("APP") : set.delete("APP");
-                              updateRow(r.id, { platform: Array.from(set) as any });
+                              updateRowLocal(r.id, { platform: Array.from(set) as any });
                             }}
                           />
                           <span>APP</span>
@@ -153,10 +161,10 @@ export default function EntryTable({ rows, setRows }: Props) {
                           <input
                             type="checkbox"
                             checked={r.platform.includes("Web")}
-                            onChange={(e) => {
+                            onChange={(e)=>{
                               const set = new Set(r.platform);
                               e.target.checked ? set.add("Web") : set.delete("Web");
-                              updateRow(r.id, { platform: Array.from(set) as any });
+                              updateRowLocal(r.id, { platform: Array.from(set) as any });
                             }}
                           />
                           <span>Web</span>
@@ -165,7 +173,7 @@ export default function EntryTable({ rows, setRows }: Props) {
                       <td>
                         <textarea
                           value={r.content}
-                          onChange={(e) => updateRow(r.id, { content: e.target.value })}
+                          onChange={(e)=>updateRowLocal(r.id, { content: e.target.value })}
                           rows={2}
                           className="w-full px-2 py-1 rounded bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"
                         />
@@ -173,14 +181,14 @@ export default function EntryTable({ rows, setRows }: Props) {
                       <td>
                         <input
                           value={r.owner || ""}
-                          onChange={(e) => updateRow(r.id, { owner: e.target.value })}
+                          onChange={(e)=>updateRowLocal(r.id, { owner: e.target.value })}
                           className="w-full px-2 py-1 rounded bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"
                         />
                       </td>
                       <td className="text-xs text-slate-500">{r.createdAt}</td>
                       <td className="space-x-2">
-                        <button className="btn btn-primary" onClick={() => updateRow(r.id, { _editing: false })}>저장</button>
-                        <button className="btn btn-ghost" onClick={() => updateRow(r.id, { _editing: false })}>취소</button>
+                        <button className="btn btn-primary" onClick={()=>onSave(r.id)}>저장</button>
+                        <button className="btn btn-ghost" onClick={()=>updateRowLocal(r.id, { _editing: false })}>취소</button>
                       </td>
                     </>
                   ) : (
@@ -192,9 +200,9 @@ export default function EntryTable({ rows, setRows }: Props) {
                       <td>{escapeHtml(r.owner || "-")}</td>
                       <td className="text-xs text-slate-500">{r.createdAt}</td>
                       <td className="space-x-2">
-                        <button className="btn btn-ghost" onClick={() => updateRow(r.id, { _editing: true })}>수정</button>
-                        <button className="btn btn-ghost" onClick={() => dupRow(r.id)}>복제</button>
-                        <button className="btn btn-ghost" onClick={() => removeRow(r.id)}>삭제</button>
+                        <button className="btn btn-ghost" onClick={()=>updateRowLocal(r.id, { _editing: true })}>수정</button>
+                        {/* 복제 버튼 제거 */}
+                        <button className="btn btn-ghost" onClick={()=>onDelete(r.id)}>삭제</button>
                       </td>
                     </>
                   )}
