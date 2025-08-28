@@ -3,8 +3,9 @@
 import { useState } from "react";
 import type { Row } from "./types";
 
+// components/EntryForm.tsx 상단
 type Props = {
-  onAdd: (row: Row) => void;
+  onAdd: (row: Row) => void | Promise<any>;
 };
 
 export default function EntryForm({ onAdd }: Props) {

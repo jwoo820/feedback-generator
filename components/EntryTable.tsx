@@ -108,7 +108,7 @@ export default function EntryTable({ rows, setRows, onSaveRow, onDeleteRow }: Pr
         <div className="flex items-center justify-between mb-3">
           <div className="text-sm text-slate-600 dark:text-slate-400">총 <span>{filtered.length}</span>건</div>
         </div>
-        <div className="overflow-auto max-h=[60vh] rounded-xl border border-slate-200 dark:border-slate-700">
+        <div className="overflow-auto max-h-[60vh] rounded-xl border border-slate-200 dark:border-slate-700">
           <table>
             <thead>
               <tr>
