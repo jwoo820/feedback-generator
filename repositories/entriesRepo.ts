@@ -10,6 +10,7 @@ const mapRow = (d: any): Row => ({
     content: d.content ?? "",
     owner: d.owner ?? "",
     createdAt: (d.created_at || "").replace("T", " ").slice(0, 16),
+    completedAt: d.completedAt || null
 });
 
 export const entriesRepo = {
