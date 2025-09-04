@@ -11,6 +11,8 @@ export default function EntryForm({ onAdd }: Props) {
   const [item, setItem] = useState("");
   const [app, setApp] = useState(true);
   const [web, setWeb] = useState(false);
+  const [service, setService] = useState(false);
+  const [tablet, setTablet] = useState(false);
   const [content, setContent] = useState("");
   const [owner, setOwner] = useState("");
 
@@ -21,7 +23,7 @@ export default function EntryForm({ onAdd }: Props) {
       id: Math.random().toString(36).slice(2),
       reflect,
       item: item.trim(),
-      platform: [app && "APP", web && "Web"].filter(Boolean) as ("APP" | "Web")[],
+      platform: [app && "APP", web && "Web", service && "Service", tablet && "Tablet"].filter(Boolean) as ("APP" | "Web" | "Service" | "Tablet")[],
       content,
       owner,
       createdAt: new Date().toISOString().replace("T", " ").slice(0, 16),
@@ -47,6 +49,14 @@ export default function EntryForm({ onAdd }: Props) {
         <label className="inline-flex items-center gap-2">
           <input type="checkbox" checked={web} onChange={(e) => setWeb(e.target.checked)} />
           <span>Web</span>
+        </label>
+        <label className="inline-flex items-center gap-2">
+          <input type="checkbox" checked={service} onChange={(e) => setService(e.target.checked)} />
+          <span>Service</span>
+        </label>
+        <label className="inline-flex items-center gap-2">
+          <input type="checkbox" checked={tablet} onChange={(e) => setTablet(e.target.checked)} />
+          <span>Tablet</span>
         </label>
         <input value={owner} onChange={(e) => setOwner(e.target.value)} placeholder="담당자" className="input w-40" />
       </div>

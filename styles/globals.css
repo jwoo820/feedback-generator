@@ -39,32 +39,34 @@
   }
 }
 
-/* ===== Components ===== /
+/* ===== Components ===== */
 @layer components {
-/ Buttons */
-.btn {
-  @apply inline-flex items-center justify-center rounded-lg px-4 py-2 font-medium transition-colors;
-}
 
-.btn-primary {
-  @apply bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800;
-}
+  /* Buttons */
+  .btn {
+    @apply inline-flex items-center justify-center rounded-lg px-4 py-2 font-medium transition-colors;
+  }
 
-.btn-ghost {
-  @apply bg-transparent text-slate-900 hover:bg-slate-100 dark:text-slate-50 dark:hover:bg-slate-800;
-}
+  .btn-primary {
+    @apply bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800;
+  }
 
-/* Card */
-.card {
-  @apply rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800;
-}
+  .btn-ghost {
+    @apply bg-transparent text-slate-900 hover:bg-slate-100 dark:text-slate-50 dark:hover:bg-slate-800;
+  }
 
-/* Inputs */
-.input {
-  @apply rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 dark:border-slate-600 dark:bg-slate-900 dark:focus:border-blue-400;
-}
+  /* Card */
+  .card {
+    @apply rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800;
+  }
 
-/* Chip */
-.chip {
-  @apply inline-flex items-center rounded-full border border-slate-300 bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-900 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-50;
+  /* Inputs */
+  .input {
+    @apply rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 dark:border-slate-600 dark:bg-slate-900 dark:focus:border-blue-400;
+  }
+
+  /* Chip */
+  .chip {
+    @apply inline-flex items-center rounded-full border border-slate-300 bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-900 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-50;
+  }
 }

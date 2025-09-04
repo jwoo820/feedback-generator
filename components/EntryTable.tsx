@@ -1,4 +1,3 @@
-// components/EntryTable.tsx
 "use client";
 
 import { useMemo, useState } from "react";
@@ -84,7 +83,7 @@ export default function EntryTable({ rows, setRows, onSaveRow, onDeleteRow }: Pr
             <thead>
               <tr>
                 <th className="w-28">반영 여부</th><th className="w-64">항목</th><th className="w-32">플랫폼</th>
-                <th>내용</th><th className="w-32">담당자</th><th className="w-40">생성일시</th><th className="w-36">작업</th>
+                <th>내용</th><th className="w-32">담당자</th><th className="w-40">생성일시</th><th className="w-40">완료일시</th><th className="w-36">작업</th>
               </tr>
             </thead>
             <tbody>
@@ -113,6 +112,7 @@ export default function EntryTable({ rows, setRows, onSaveRow, onDeleteRow }: Pr
                       <td><textarea value={r.content} onChange={(e) => updateRowLocal(r.id, { content: e.target.value })} rows={2} className="input w-full" /></td>
                       <td><input value={r.owner || ""} onChange={(e) => updateRowLocal(r.id, { owner: e.target.value })} className="input w-full" /></td>
                       <td className="text-xs text-slate-500">{r.createdAt}</td>
+                      <td className="text-xs text-slate-500">{r.completedAt || "-"}</td>
                       <td className="space-x-2"><button className="btn btn-primary" onClick={() => onSave(r.id)}>저장</button><button className="btn btn-ghost" onClick={() => updateRowLocal(r.id, { _editing: false })}>취소</button></td>
                     </>
                   ) : (
@@ -123,6 +123,7 @@ export default function EntryTable({ rows, setRows, onSaveRow, onDeleteRow }: Pr
                       <td className="whitespace-pre-wrap">{escapeHtml(r.content)}</td>
                       <td>{escapeHtml(r.owner || "-")}</td>
                       <td className="text-xs text-slate-500">{r.createdAt}</td>
+                      <td className="text-xs text-slate-500">{r.completedAt || "-"}</td>
                       <td className="space-x-2"><button className="btn btn-ghost" onClick={() => updateRowLocal(r.id, { _editing: true })}>수정</button><button className="btn btn-ghost" onClick={() => onDelete(r.id)}>삭제</button></td>
                     </>
                   )}
