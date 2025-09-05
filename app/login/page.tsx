@@ -1,11 +1,19 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabaseClient";
 
 export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="p-6">로딩 중…</div>}>
+      <LoginInner />
+    </Suspense>
+  );
+}
+
+function LoginInner() {
   const router = useRouter();
   const search = useSearchParams();
   const debug = search?.has("debugAuth") ?? false;
@@ -54,6 +62,7 @@ export default function LoginPage() {
   }
 
   if (loading) return <div className="p-6">로딩 중…</div>;
+  if (user && debug) return <div className="p-6">/entries로 이동 중…</div>;
   if (user) return null; // navigating to /entries
 
   return (
@@ -61,7 +70,7 @@ export default function LoginPage() {
       {debug && (
         <div className="card">
           <div className="text-xs opacity-80">DEBUG MODE</div>
-          <pre className="text-xs whitespace-pre-wrap break-all">{JSON.stringify({ loading, user: user?.id }, null, 2)}</pre>
+          <pre className="text-xs whitespace-pre-wrap break-all">{JSON.stringify({ loading, userId: (user as any)?.id ?? null }, null, 2)}</pre>
         </div>
       )}
 
