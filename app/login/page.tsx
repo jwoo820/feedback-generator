@@ -1,19 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState, Suspense } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabaseClient";
 
 export default function LoginPage() {
-  return (
-    <Suspense fallback={<div className="p-6">로딩 중…</div>}>
-      <LoginInner />
-    </Suspense>
-  );
-}
 
-function LoginInner() {
   const router = useRouter();
   const search = useSearchParams();
   const debug = search?.has("debugAuth") ?? false;
