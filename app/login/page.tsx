@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabaseClient";
+export const dynamic = 'force-dynamic'; // SSG/캐싱 비활성화
 
 export default function LoginPage() {
 
